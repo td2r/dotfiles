@@ -7,6 +7,7 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 Plugin 'octol/vim-cpp-enhanced-highlight'
 Plugin 'tComment'
+Plugin 'asmx86_64'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -28,9 +29,13 @@ set expandtab
 " Match { with {} and {; with {};
 inoremap {<CR> {<CR>}<ESC>O
 inoremap {;<CR> {<CR>};<ESC>O
+inoremap {\<CR> {<CR>} printf("\n");<ESC>O
 
 " Colorcolumn width=80, color=darkgreen
 autocmd BufNewFile,BufRead *.cpp,*.java,*.py,*.sh set cc=85 | highlight ColorColumn ctermbg=8
+
+" Use asm plugin if .asm
+autocmd BufNewFile,BufRead *.asm set syntax=asmx86_64 | set shiftwidth=16
 
 " Compiling & running .cpp files
 command! CPPc !g++ -g % -o %.out
