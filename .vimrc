@@ -33,6 +33,9 @@ inoremap {\<CR> {<CR>} printf("\n");<ESC>O
 " Colorcolumn width=80, color=darkgreen
 autocmd BufNewFile,BufRead *.cpp,*.java,*.py,*.sh set cc=85 | highlight ColorColumn ctermbg=8
 
+" asm file settings
+autocmd BufNewFile,BufRead *.asm set ft=nasm | set shiftwidth=16 | set tabstop=16 | set softtabstop=16
+
 " Compiling & running .cpp files
 command! CPPc !g++ -g % -o %.out
 command! CPPcr !g++ -g % -o %.out && ./%.out
@@ -42,4 +45,4 @@ command! Jc !javac %
 command! -nargs=* Jcr !javac % && java %:r <args>
 
 " Run Python program
-command! PR !python3 %
+command! Pr !python3 %
