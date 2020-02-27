@@ -40,6 +40,9 @@ autocmd BufNewFile,BufRead *.asm set ft=nasm | set shiftwidth=16 | set tabstop=1
 command! CPPc !g++ -g % -o %.out
 command! CPPcr !g++ -g % -o %.out && ./%.out
 
+" asm debug
+command! ASMD !~/edb-debugger/build/edb --run %:r
+
 " Compiling & running .java files
 command! Jc !javac %
 command! -nargs=* Jcr !javac % && java %:r <args>
