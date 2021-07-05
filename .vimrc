@@ -40,8 +40,8 @@ autocmd BufNewFile,BufRead *.asm set ft=nasm | set shiftwidth=16 | set tabstop=1
 let s:compile_line = {
             \ "asm"  : "nasm -f elf64 % -o %:r.o && ld %:r.o -o %:r",
             \ "c"    : "gcc -g % -o %:r.out",
-            \ "cpp"  : has('win32')
-            \               ? "g++ -O2 -Wall -std=gnu++11 -fsanitize=address % -o %:r.exe"
+            \ "cpp"  : has('win32') || has('win32unix')
+            \               ? "g++ -O2 -Wall -std=gnu++11 % -o %:r.exe"
             \               : "g++ -fsanitize=address -g % -o %:r.out",
             \ "java" : "javac %"
             \}
@@ -49,8 +49,8 @@ let s:compile_line = {
 let s:run_line = {
             \ "asm"    : "./%:r",
             \ "c"      : "./%:r.out",
-            \ "cpp"    : has('win32')
-            \               ? "%:r.exe"
+            \ "cpp"    : has('win32') || has('win32unix')
+            \               ? "./%:r.exe"
             \               : "./%:r.out",
             \ "java"   : "java %:r",
             \ "python" : "python3 %"
