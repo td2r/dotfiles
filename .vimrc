@@ -1,60 +1,79 @@
-set nocompatible             " be iMproved, required
-filetype on                  " required
-
+" Vundle plugins
+set nocompatible
+filetype on
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-
 Plugin 'gmarik/Vundle.vim'
 Plugin 'octol/vim-cpp-enhanced-highlight'
 Plugin 'tComment'
+call vundle#end()
+filetype plugin indent on
 
-call vundle#end()            " required
-filetype plugin indent on    " required
-
-" Some magic words
+" Autoindents
 set autoindent
 set smartindent
 
-" Highlights word when search
+" Highlight search
 set incsearch
 
 " Tab settings
-set shiftwidth=4
-set tabstop=4
-set softtabstop=4
 set smarttab
 set expandtab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
 
-" Match { with {} and {; with {};
+" Brackets pairing
 inoremap {<CR> {<CR>}<ESC>O
 inoremap {;<CR> {<CR>};<ESC>O
 inoremap {\<CR> {<CR>} printf("\n");<ESC>O
-" inoremap for sout in java
-autocmd BufNewFile,BufRead *.java inoremap sout<TAB> System.out.println();<ESC>hi
 
-" Colorcolumn width=80, color=darkgreen
-autocmd BufNewFile,BufRead *.cpp,*.java,*.py,*.js,*.sh set cc=85 | highlight ColorColumn ctermbg=8
+" Bounding line
+autocmd BufNewFile,BufRead *.c,*.cpp,*.java,*.py,*.js,*.sh set cc=85 | highlight ColorColumn ctermbg=8
+
+" sout in java
+autocmd BufNewFile,BufRead *.java inoremap sout<TAB> System.out.println();<ESC>hi
 
 " asm file settings
 autocmd BufNewFile,BufRead *.asm set ft=nasm | set shiftwidth=16 | set tabstop=16 | set softtabstop=16
 
-" Compiling & running .c files
-command! Cc !gcc -g % -o %.out
-command! Ccr !gcc -g % -o %.out && ./%.out
+let s:compile_line = {
+            \ "asm"  : "nasm -f elf64 % -o %:r.o && ld %:r.o -o %:r",
+            \ "c"    : "gcc -g % -o %:r.out",
+            \ "cpp"  : has('win32')
+            \               ? "g++ -O2 -Wall -std=gnu++11 -fsanitize=address % -o %:r.exe"
+            \               : "g++ -fsanitize=address -g % -o %:r.out",
+            \ "java" : "javac %"
+            \}
 
-" Compiling & running .cpp files
-command! CPPc !g++ -fsanitize=address -g % -o %.out
-command! CPPcr !g++ -fsanitize=address -g % -o %.out && ./%.out < %:h/data.in
+let s:run_line = {
+            \ "asm"    : "./%:r",
+            \ "c"      : "./%:r.out",
+            \ "cpp"    : has('win32')
+            \               ? "%:r.exe"
+            \               : "./%:r.out",
+            \ "java"   : "java %:r",
+            \ "python" : "python3 %"
+            \}
 
-" asm compile
-command! ASMc !nasm -f elf64 % -o %:r.o && ld %:r.o -o %:r
-command! ASMcr !nasm -f elf64 % -o %:r.o && ld %:r.o -o %:r && ./%:r
-" asm debug
-command! ASMd !~/edb-debugger/build/edb --run %:r
+function! Compile() abort
+    if (has_key(s:compile_line, &ft))
+        execute("!" . get(s:compile_line, &ft))
+    else
+        echo 'No compile script for this filetype'
+    endif
+endfunction
 
-" Compiling & running .java files
-command! Jc !javac %
-command! -nargs=* Jcr !javac % && java %:r <args>
+function! Compile_and_run(...) abort
+    if (has_key(s:run_line, &ft))
+        execute( "!"
+                    \ . (has_key(s:compile_line, &ft) ? get(s:compile_line, &ft) . " && " : "")
+                    \ . get(s:run_line, &ft)) . (a:0 ? " < %:h/" . a:1 : "")
+    else
+        echo 'No execute script for this filetype'
+    endif
+endfunction
 
-" Run Python program
-command! Pr !python3 %
+noremap <C-F10> :call Compile()<CR>
+noremap <F10> :call Compile_and_run()<CR>
+noremap <S-F10> :call Compile_and_run("data.in")<CR>
