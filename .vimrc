@@ -1,41 +1,37 @@
 " Vundle plugins
 set nocompatible
-filetype on
 set rtp+=~/.vim/bundle/Vundle.vim
+
 call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 Plugin 'octol/vim-cpp-enhanced-highlight'
 Plugin 'tComment'
 call vundle#end()
-filetype plugin indent on
 
-" Autoindents
-set autoindent
-set smartindent
+filetype plugin indent on
 
 " Highlight search
 set incsearch
 
-" Tab settings
-set smarttab
-set expandtab
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+" Tabs and indents
+let &tabstop = (&ft ==# 'asm' ? 16 : 4)
+let &shiftwidth = &tabstop
+let &softtabstop = &shiftwidth
+set expandtab smarttab autoindent smartindent
+
+" Bounding line
+autocmd BufNewFile,BufRead *.c,*.cpp,*.java,*.py,*.sh,*.vimrc
+            \ set cc=85 | highlight ColorColumn ctermbg=8
 
 " Brackets pairing
 inoremap {<CR> {<CR>}<ESC>O
 inoremap {;<CR> {<CR>};<ESC>O
 inoremap {\<CR> {<CR>} printf("\n");<ESC>O
 
-" Bounding line
-autocmd BufNewFile,BufRead *.c,*.cpp,*.java,*.py,*.js,*.sh set cc=85 | highlight ColorColumn ctermbg=8
-
 " sout in java
-autocmd BufNewFile,BufRead *.java inoremap sout<TAB> System.out.println();<ESC>hi
-
-" asm file settings
-autocmd BufNewFile,BufRead *.asm set ft=nasm | set shiftwidth=16 | set tabstop=16 | set softtabstop=16
+if (&ft ==# 'java')
+    inoremap sout<TAB> System.out.println();<ESC>hi
+endif
 
 let s:compile_line = {
             \ "asm"  : "nasm -f elf64 % -o %:r.o && ld %:r.o -o %:r",
@@ -43,7 +39,8 @@ let s:compile_line = {
             \ "cpp"  : has('win32') || has('win32unix')
             \               ? "g++ -O2 -Wall -std=gnu++11 % -o %:r.exe"
             \               : "g++ -fsanitize=address -g % -o %:r.out",
-            \ "java" : "javac %"
+            \ "java" : "javac %",
+            \ "sh"   : "chmod u+x %"
             \}
 
 let s:run_line = {
@@ -53,7 +50,8 @@ let s:run_line = {
             \               ? "./%:r.exe"
             \               : "./%:r.out",
             \ "java"   : "java %:r",
-            \ "python" : "python3 %"
+            \ "python" : "python3 %",
+            \ "sh"     : "./%"
             \}
 
 function! Compile() abort
@@ -66,9 +64,9 @@ endfunction
 
 function! Compile_and_run(...) abort
     if (has_key(s:run_line, &ft))
-        execute( "!"
-                    \ . (has_key(s:compile_line, &ft) ? get(s:compile_line, &ft) . " && " : "")
-                    \ . get(s:run_line, &ft)) . (a:0 ? " < %:h/" . a:1 : "")
+        " call feedkeys("\<CR>")
+        silent call Compile()
+        unsilent execute( "!" . get(s:run_line, &ft)) . (a:0 ? " < %:h/" . a:1 : "")
     else
         echo 'No execute script for this filetype'
     endif
