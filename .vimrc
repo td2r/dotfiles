@@ -1,4 +1,5 @@
 " Vundle plugins
+
 set nocompatible
 set rtp+=~/.vim/bundle/Vundle.vim
 
@@ -10,8 +11,8 @@ call vundle#end()
 
 filetype plugin indent on
 
-" Highlight search
-set incsearch
+" Highlight search, disable bells
+set incsearch belloff=all novisualbell
 
 " Tabs and indents
 let &tabstop = (&ft ==# 'asm' ? 16 : 4)
