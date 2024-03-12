@@ -1,13 +1,11 @@
 " -------------------------- Vundle plugins ---------------------------------
-
 set nocompatible " Required
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
 
+call vundle#begin()
 " Let Vundle manage itself
 Plugin 'gmarik/Vundle.vim'
-
 " Idk, smth for cpp highlight
 Plugin 'octol/vim-cpp-enhanced-highlight'
 " Comment/uncomment on ctrl+/ twice
@@ -19,25 +17,22 @@ Plugin 'jesseleite/vim-noh'
 " Colorscheme
 Plugin 'morhetz/gruvbox'
 Plugin 'alessandroyorba/alduin'
-
 call vundle#end()
 filetype plugin indent on
 
-" ------------------------- \Vundle plugins ---------------------------------
-
-" let g:alduin_Shout_Dragon_Aspect = 1
-" colorscheme alduin
-
-colorscheme gruvbox
-
-" Return to last edit position when opening files (You want this!)
+" -------------------------- Common settings --------------------------------
+" Return to last edit position when opening files
 autocmd BufReadPost *
      \ if line("'\"") > 0 && line("'\"") <= line("$") |
      \   exe "normal! g`\"" |
      \ endif
 
-" ------------------------- Cursor style ------------------------------------
+" let g:alduin_Shout_Dragon_Aspect = 1
+colorscheme alduin
+" colorscheme gruvbox
+" colorscheme vividchalk
 
+" ------------------------- Cursor style ------------------------------------
 " Change cursor style in different modes
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
@@ -57,10 +52,7 @@ augroup END
 " 5 -> blinking bar (xterm).
 " 6 -> steady bar (xterm).
 
-" ------------------------- \Cursor style ------------------------------------
-
 " ------------------------- Settings flags -----------------------------------
-
 " Fix backspace in insert mode
 set backspace=indent,eol,start
 
@@ -101,7 +93,7 @@ set ruler
 set hlsearch
 
 " Move cursor with mouse tap!
-set mouse=a
+" set mouse=a
 
 set undodir=~/.vim/undo//
 " Undo even after re-open file!
@@ -115,12 +107,7 @@ set undoreload=10000
 set encoding=utf-8
 set fileencodings=utf-8,ucs-bom,cp1251,koi8-r,default,latin1
 
-" colorscheme vividchalk
-
-" ------------------------- \Settings flags -----------------------------------
-
 " ------------------------- Mappings -----------------------------------------
-
 " Brackets pairing
 inoremap {<CR> {<CR>}<ESC>O
 inoremap {;<CR> {<CR>};<ESC>O
@@ -201,8 +188,6 @@ map Ь M
 map Б <
 map Ю >
 
-" ------------------------- \Mappings ----------------------------------------
-
 " ------------------------- Filetype dependent settings --------------------------
 "  Better use ftplugin for some more complicated cases.
 "  This realisation has problems with re-loading files with different
@@ -216,15 +201,16 @@ autocmd BufRead,BufNewFile *.java
 autocmd BufNewFile,BufRead *.c,*.cpp,*.java,*.py,*.sh,*.vimrc
             \ set cc=85 | highlight ColorColumn ctermbg=8
 
+" 2 spaces tab for .sh
+autocmd BufNewFile,BufRead *.sh
+            \ set tabstop=2 shiftwidth=2 softtabstop=2
+
 " 16 spaces tab for assembler
 autocmd BufNewFile,BufRead *.asm,.*nasm
             \ set tabstop=16 shiftwidth=16 softtabstop=16
 
-" ------------------------ \Filetype dependent settings --------------------------
-
 " ------------------------- Compilation --------------------------------------
 "  This only useful for competitive programming tasks
-
 let s:compile_line = {
             \ "asm"  : "nasm -f elf64 % -o %:r.o && ld %:r.o -o %:r",
             \ "c"    : "gcc -g % -o %:r.out",
