@@ -15,8 +15,8 @@ Plugin 'peterrincker/vim-searchlight'
 " :noh on cursor move
 Plugin 'jesseleite/vim-noh'
 " Colorscheme
-Plugin 'morhetz/gruvbox'
 Plugin 'alessandroyorba/alduin'
+Plugin 'morhetz/gruvbox'
 call vundle#end()
 filetype plugin indent on
 
@@ -95,12 +95,13 @@ set hlsearch
 " Move cursor with mouse tap!
 " set mouse=a
 
-set undodir=~/.vim/undo//
-" Undo even after re-open file!
+" Undo even after re-open file
+if !isdirectory($HOME."/.vim/undo")
+    call mkdir($HOME."/.vim/undo", "", 0770)
+endif
+set undodir=~/.vim/undo/
 set undofile
-" Maximum number of changes that can be undone
 set undolevels=1000
-" Maximum number lines to save for undo on a buffer reload
 set undoreload=10000
 
 " Okay, may be useful
@@ -253,4 +254,4 @@ endfunction
 noremap <C-F10> :call Compile()<CR>
 noremap <F10> :call Compile_and_run()<CR>
 noremap <S-F10> :call Compile_and_run("data.in")<CR>
-" ------------------------- \Compilation -------------------------------------
+
