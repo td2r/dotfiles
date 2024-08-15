@@ -5,7 +5,7 @@ set rtp+=~/.vim/bundle/Vundle.vim
 
 call vundle#begin()
 " Let Vundle manage itself
-Plugin 'gmarik/Vundle.vim'
+Plugin 'VundleVim/Vundle.vim'
 " Idk, smth for cpp highlight
 Plugin 'octol/vim-cpp-enhanced-highlight'
 " Comment/uncomment on ctrl+/ twice
